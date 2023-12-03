@@ -188,8 +188,6 @@ listlines.forEach((line, index) => {
 
 stars = stars.sort();
 
-console.log(stars);
-
 while(stars.length != 0){
     let first = stars.shift();
     let second;
@@ -202,6 +200,5 @@ while(stars.length != 0){
         total += first[1] * second[1];
     }
 }
-
 
 console.log(total);
