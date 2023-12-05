@@ -193,6 +193,26 @@ let seeds = [];
 let maps = [];
 let total = -1;
 
+function getDestination(seed){
+    let next = "seed";
+    while(next != "location"){
+        let atob = maps[next];
+        let map = atob["map"];
+
+        let check = seed;
+        for(let i = 0; i < map.length && seed == check; i++){
+            let row = map[i];
+            if(seed >= row[1] && seed < row[1] + row[2]) seed = row[0] + (seed - row[1]);
+        }
+
+        next = atob["destination"];
+    }
+
+    if(seed < total || total == -1) total = seed;
+
+    return seed;
+}
+
 listlines.forEach((line) => {
     if(line.indexOf("seeds:") != -1){
         let rawseeds = [...line.matchAll(/(\d+)/g)];
@@ -225,61 +245,17 @@ while(seeds.length > 0){
     let prec = -1;
     let j;
     for(j = 0; j < n; j+=100000){
-        let next = "seed";
-        let seed = tmpseed+j;
-        while(next != "location"){
-            let atob = maps[next];
-            let map = atob["map"];
-    
-            let check = seed;
-            for(let i = 0; i < map.length && seed == check; i++){
-                let row = map[i];
-                if(seed >= row[1] && seed < row[1] + row[2]) seed = row[0] + (seed - row[1]);
-            }
-    
-            next = atob["destination"];
-        }
+        let seed = getDestination(tmpseed+j);
+        prec = seed;
         if(seed - 100000 != prec && prec != -1){
             for(let h = j - 100000; h < j; h++){
-                let next = "seed";
-                let seed = tmpseed+h;
-                while(next != "location"){
-                    let atob = maps[next];
-                    let map = atob["map"];
-            
-                    let check = seed;
-                    for(let i = 0; i < map.length && seed == check; i++){
-                        let row = map[i];
-                        if(seed >= row[1] && seed < row[1] + row[2]) seed = row[0] + (seed - row[1]);
-                    }
-            
-                    next = atob["destination"];
-                }
-
-                if(seed < total || total == -1) total = seed;
+                getDestination(tmpseed+h);
             }
         }
-        if(seed < total || total == -1) total = seed;
-        prec = seed;
     }
 
     for(j -= 100000; j < n; j++){
-        let next = "seed";
-        let seed = tmpseed+j;
-        while(next != "location"){
-            let atob = maps[next];
-            let map = atob["map"];
-    
-            let check = seed;
-            for(let i = 0; i < map.length && seed == check; i++){
-                let row = map[i];
-                if(seed >= row[1] && seed < row[1] + row[2]) seed = row[0] + (seed - row[1]);
-            }
-    
-            next = atob["destination"];
-        }
-
-        if(seed < total || total == -1) total = seed;
+        let seed = getDestination(tmpseed+j);
         prec = seed;
     }
 }
